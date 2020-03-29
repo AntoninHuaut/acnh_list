@@ -43,7 +43,7 @@
               <v-chip :color="getColorMonth(item.selectedA)">{{ item.monthA }}</v-chip>
             </template>
             <template v-slot:item.monthB="{ item }">
-              <v-chip :color="getColorMonth(item.selectedB)">{{ item.monthC }}</v-chip>
+              <v-chip :color="getColorMonth(item.selectedB)">{{ item.monthB }}</v-chip>
             </template>
             <template v-slot:item.monthC="{ item }">
               <v-chip :color="getColorMonth(item.selectedC)">{{ item.monthC }}</v-chip>
@@ -75,30 +75,21 @@ export default {
     },
     format(items) {
       const months = [
-        ["Janv", "Fev", "Mars", "Avril"],
-        ["Mai", "Juin", "Juil", "Août"],
-        ["Sept", "Oct", "Nov", "Dec"]
+        ["Jan.", "Fev.", "Mars", "Avril"],
+        ["Mai", "Juin", "Juil.", "Août"],
+        ["Sep.", "Oct.", "Nov.", "Déc."]
       ];
       let res = [];
 
       for (let i = 1; i <= 12; i++) {
-        if (i % 4 == 1) res.push({});
-        let val = res[Math.floor((i - 1) / 4)];
-
-        let line;
-        let col;
-
-        if ((i - 1) / 4 < 1) line = 0;
-        else if ((i - 1) / 4 < 2) line = 1;
-        else if ((i - 1) / 4 < 3) line = 2;
-        else col = 4;
-
-        if (i % 4 == 1) col = 0;
-        else if (i % 4 == 2) col = 1;
-        else if (i % 4 == 3) col = 2;
-        else if (i % 4 == 0) col = 3;
-
+        const line = Math.floor((i - 1) / 4);
+        const col = (i - 1) % 4;
         const letter = col == 0 ? "A" : col == 1 ? "B" : col == 2 ? "C" : "D";
+
+        if (col == 0) res.push({});
+
+        const val = res[Math.floor((i - 1) / 4)];
+
         val["month" + letter] = months[line][col];
         val["selected" + letter] = isSelect(items, i);
       }
@@ -159,10 +150,12 @@ export default {
           },
           {
             text: "Mois",
+            align: "center",
             value: "months"
           },
           {
             text: "Heures",
+            align: "center",
             value: "hours"
           },
           {
