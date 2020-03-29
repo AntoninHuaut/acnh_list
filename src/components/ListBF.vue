@@ -22,7 +22,7 @@
         multi-sort
         :headers="mainTab.headers"
         :items="mainTab.dataList"
-        :items-per-page="-1"
+        :items-per-page="15"
         :dense="mainTab.dense"
         :loading="loading"
       >
@@ -33,12 +33,25 @@
         </template>
 
         <template v-slot:item.months="{ item }">
-          <v-data-table
+          <v-data-table class="monthsTable"
             :headers="monthTab.headers"
             :items="format(item.months)"
             :hide-default-footer="monthTab.hideFooter"
             :hide-default-header="monthTab.hideHeader"
-          ></v-data-table>
+          >
+            <template v-slot:item.monthA="{ item }">
+              <v-chip :color="getColorMonth(item.selectedA)">{{ item.monthA }}</v-chip>
+            </template>
+            <template v-slot:item.monthB="{ item }">
+              <v-chip :color="getColorMonth(item.selectedB)">{{ item.monthC }}</v-chip>
+            </template>
+            <template v-slot:item.monthC="{ item }">
+              <v-chip :color="getColorMonth(item.selectedC)">{{ item.monthC }}</v-chip>
+            </template>
+            <template v-slot:item.monthD="{ item }">
+              <v-chip :color="getColorMonth(item.selectedD)">{{ item.monthD }}</v-chip>
+            </template>
+          </v-data-table>
         </template>
       </v-data-table>
     </v-card>
@@ -57,6 +70,9 @@ export default {
     type: String
   },
   methods: {
+    getColorMonth(selected) {
+      return selected ? "#A5D6A7" : "#EF9A9A";
+    },
     format(items) {
       const months = [
         ["Janv", "Fev", "Mars", "Avril"],
@@ -68,8 +84,6 @@ export default {
       for (let i = 1; i <= 12; i++) {
         if (i % 4 == 1) res.push({});
         let val = res[Math.floor((i - 1) / 4)];
-
-        val["selected" + i] = isSelect(items, i);
 
         let line;
         let col;
@@ -84,7 +98,9 @@ export default {
         else if (i % 4 == 3) col = 2;
         else if (i % 4 == 0) col = 3;
 
-        val["month" + (col + 1)] = months[line][col];
+        const letter = col == 0 ? "A" : col == 1 ? "B" : col == 2 ? "C" : "D";
+        val["month" + letter] = months[line][col];
+        val["selected" + letter] = isSelect(items, i);
       }
 
       return res;
@@ -99,20 +115,16 @@ export default {
         hideFooter: true,
         headers: [
           {
-            value: "month1",
-            divider: true
+            value: "monthA"
           },
           {
-            value: "month2",
-            divider: true
+            value: "monthB"
           },
           {
-            value: "month3",
-            divider: true
+            value: "monthC"
           },
           {
-            value: "month4",
-            divider: true
+            value: "monthD"
           }
         ]
       },
@@ -188,8 +200,8 @@ export default {
 };
 </script>
 
-<style>
-  .text-start.v-data-table__divider {
-    border: thin solid rgba(0, 0, 0, 0.12);
-  }
+<style lang="scss">
+.monthsTable > div > table > tbody > tr > .text-start {
+  border-bottom: none !important;
+}
 </style>
