@@ -9,7 +9,6 @@
 import ListBF from "@/components/ListBF.vue";
 
 export default {
-  name: "Fish",
   components: {
     ListBF
   }

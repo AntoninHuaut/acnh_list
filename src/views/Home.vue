@@ -9,7 +9,6 @@
 import SelectList from "@/components/SelectList.vue";
 
 export default {
-  name: "Home",
   components: {
     SelectList
   }

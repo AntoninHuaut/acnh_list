@@ -32,8 +32,13 @@
           </div>
         </template>
 
+        <template v-slot:item.hours="{ item }">
+          <v-chip>{{getHour(item.hours)}}</v-chip>
+        </template>
+
         <template v-slot:item.months="{ item }">
-          <v-data-table class="monthsTable"
+          <v-data-table
+            class="monthsTable"
             :headers="monthTab.headers"
             :items="format(item.months)"
             :hide-default-footer="monthTab.hideFooter"
@@ -70,6 +75,16 @@ export default {
     type: String
   },
   methods: {
+    getHour(hours) {
+      let minHour = Math.min.apply(null, hours);
+      let maxHour = Math.max.apply(null, hours) + 1;
+
+      if (minHour == 0 && maxHour == 24) return "Toute la journée";
+      if (minHour < 10) minHour = "0" + minHour;
+      if (maxHour < 10) maxHour = "0" + maxHour;
+
+      return `${minHour}h00 » ${maxHour}h00`;
+    },
     getColorMonth(selected) {
       return selected ? "#A5D6A7" : "#EF9A9A";
     },
@@ -154,7 +169,7 @@ export default {
             value: "months"
           },
           {
-            text: "Heures",
+            text: "Heures d'apparition",
             align: "center",
             value: "hours"
           },
@@ -180,6 +195,7 @@ export default {
       .then(res => {
         this.mainTab.dataList = res.map(item => {
           item.img = `https://raw.githubusercontent.com/Cat333Pokemon/critterpedia/master/images/${this.type}/${item.name}.png`;
+          item.price = item.price == -1 ? "N/A" : item.price;
           return item;
         });
 
