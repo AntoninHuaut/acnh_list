@@ -16,10 +16,12 @@
         multi-sort
         :headers="headers"
         :items="dataList"
-        :items-per-page="5"
+        :items-per-page="-1"
       >
-        <template v-slot:item.timestamp="{ item }">
-          <span>{{ new Date(item.timestamp).toLocaleDateString() }}</span>
+        <template v-slot:item.image="{ item }">
+          <div class="p-2">
+            <v-img :src="item.img" :alt="item.name" width="92px"></v-img>
+          </div>
         </template>
       </v-data-table>
     </v-card>
@@ -55,10 +57,14 @@ export default {
       ],
       headers: [
         {
+          text: "Image",
+          value: "image"
+        },
+        {
           text: "Nom EN",
           align: "start",
-          sortable: true,
-          value: "name"
+          value: "name",
+          sortable: true
         },
         {
           text: "Mois",
@@ -70,11 +76,13 @@ export default {
         },
         {
           text: "Location",
-          value: "location"
+          value: "location",
+          sortable: true
         },
         {
           text: "Prix",
-          value: "price"
+          value: "price",
+          sortable: true
         }
       ]
     };
@@ -85,7 +93,11 @@ export default {
     )
       .then(res => res.json())
       .then(res => {
-        this.dataList = res;
+        this.dataList = res.map(item => {
+          item.img = `https://raw.githubusercontent.com/Cat333Pokemon/critterpedia/master/images/${this.type}/${item.name}.png`;
+          return item;
+        });
+
         this.loading = false;
       })
       .catch(() => {

@@ -2,16 +2,18 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
-        <v-img
-          alt="Animal Crossing New Horizons Logo"
-          class="shrink mr-2"
-          contain
-          src="https://univers-crossing.com/assets/image/jeu/animal-crossing-new-horizons/new-horizons-logo.png"
-          transition="scale-transition"
-          width="82"
-        />
+        <router-link to="/">
+          <v-img
+            alt="Animal Crossing New Horizons Logo"
+            class="shrink mr-2"
+            contain
+            src="https://univers-crossing.com/assets/image/jeu/animal-crossing-new-horizons/new-horizons-logo.png"
+            transition="scale-transition"
+            width="82"
+          />
+        </router-link>
 
-        <v-toolbar-title>ACNH List</v-toolbar-title>
+        <v-toolbar__title style="cursor: pointer" @click="$router.push('/')">Accueil</v-toolbar__title>
       </div>
 
       <v-spacer></v-spacer>
