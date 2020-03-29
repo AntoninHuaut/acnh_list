@@ -13,7 +13,10 @@
           />
         </router-link>
 
-        <v-toolbar-title style="cursor: pointer" @click="$router.push('/')">Accueil</v-toolbar-title>
+        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/')">Accueil</v-toolbar-title>
+        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/bugs')">Insectes</v-toolbar-title>
+        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/fish')">Poissons</v-toolbar-title>
+        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/fossils')">Fossiles</v-toolbar-title>
       </div>
     </v-app-bar>
 
@@ -26,3 +29,10 @@
 <script>
 export default {};
 </script>
+
+<style scoped>
+.itemAppbar {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+</style>
