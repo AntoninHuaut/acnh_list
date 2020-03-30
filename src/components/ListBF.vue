@@ -33,7 +33,7 @@
         </template>
 
         <template v-slot:item.hours="{ item }">
-          <v-chip>{{getHour(item.hours)}}</v-chip>
+          <v-chip :color="getColorHour(item.hours)">{{getHour(item.hours)}}</v-chip>
         </template>
 
         <template v-slot:item.months="{ item }">
@@ -68,6 +68,8 @@ function isSelect(items, i) {
   return i in items;
 }
 
+import moment from 'moment';
+
 export default {
   name: "ListBF",
   props: {
@@ -75,6 +77,15 @@ export default {
     type: String
   },
   methods: {
+    getColorHour(hours) {
+      const currentHour = moment().hours();
+      const minHour = Math.min.apply(null, hours);
+      const maxHour = Math.max.apply(null, hours);
+
+      if (currentHour < minHour || currentHour > maxHour) return "#EF9A9A";
+      else if (currentHour == maxHour) return "#FFCC80";
+      else return "#A5D6A7";
+    },
     getHour(hours) {
       let minHour = Math.min.apply(null, hours);
       let maxHour = Math.max.apply(null, hours) + 1;
@@ -113,6 +124,46 @@ export default {
     }
   },
   data() {
+    let mainTabHeaders = [
+      {
+        text: "Image",
+        value: "image"
+      },
+      {
+        text: "Nom EN",
+        align: "start",
+        value: "name",
+        sortable: true
+      },
+      {
+        text: "Mois",
+        align: "center",
+        value: "months"
+      },
+      {
+        text: "Heures d'apparition",
+        align: "center",
+        value: "hours"
+      },
+      {
+        text: "Location",
+        value: "location",
+        sortable: true
+      },
+      {
+        text: "Prix",
+        value: "price",
+        sortable: true
+      }
+    ];
+
+    if (this.type === "fish")
+      mainTabHeaders.push({
+        text: "Taille",
+        value: "shadow",
+        sortable: true
+      });
+
     return {
       loading: true,
       snackbar: false,
@@ -152,38 +203,7 @@ export default {
             href: "/fossils"
           }
         ],
-        headers: [
-          {
-            text: "Image",
-            value: "image"
-          },
-          {
-            text: "Nom EN",
-            align: "start",
-            value: "name",
-            sortable: true
-          },
-          {
-            text: "Mois",
-            align: "center",
-            value: "months"
-          },
-          {
-            text: "Heures d'apparition",
-            align: "center",
-            value: "hours"
-          },
-          {
-            text: "Location",
-            value: "location",
-            sortable: true
-          },
-          {
-            text: "Prix",
-            value: "price",
-            sortable: true
-          }
-        ]
+        headers: mainTabHeaders
       }
     };
   },

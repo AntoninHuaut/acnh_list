@@ -13,11 +13,31 @@
           />
         </router-link>
 
-        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/')">Accueil</v-toolbar-title>
-        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/bugs')">Insectes</v-toolbar-title>
-        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/fish')">Poissons</v-toolbar-title>
-        <v-toolbar-title class="itemAppbar" style="cursor: pointer" @click="$router.push('/fossils')">Fossiles</v-toolbar-title>
+        <router-link to="/">
+          <v-btn text>
+            <span class="mr-2">Accueil</span>
+          </v-btn>
+        </router-link>
+        <router-link to="/bugs">
+          <v-btn text>
+            <span class="mr-2">Insectes</span>
+          </v-btn>
+        </router-link>
+        <router-link to="/fish">
+          <v-btn text>
+            <span class="mr-2">Poissons</span>
+          </v-btn>
+        </router-link>
+        <router-link to="/fossils">
+          <v-btn text>
+            <span class="mr-2">Fossiles</span>
+          </v-btn>
+        </router-link>
       </div>
+
+      <v-spacer></v-spacer>
+
+      <v-badge>{{currentDate}}</v-badge>
     </v-app-bar>
 
     <v-content>
@@ -27,7 +47,25 @@
 </template>
 
 <script>
-export default {};
+import moment from 'moment';
+
+export default {
+  data() {
+    return {
+      currentDate: ""
+    };
+  },
+  methods: {
+    setDate: function() {
+      setInterval(() => {
+        this.currentDate = moment().format("[Date actuelle :] DD/MM/YYYY HH[h]mm");
+      }, 1000);
+    }
+  },
+  mounted() {
+    this.setDate();
+  }
+};
 </script>
 
 <style scoped>
