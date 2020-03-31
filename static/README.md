@@ -1,0 +1,1 @@
+Thanks to [critterpedia](https://github.com/Cat333Pokemon/critterpedia)
