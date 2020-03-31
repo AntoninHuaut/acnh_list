@@ -18,7 +18,7 @@
           <router-link v-for="(next, i) in list" :key="i" :to="next.href" class="subheading mx-3">
             <v-img
               :alt="next.text"
-              :src="require(`../assets/${next.img}`)"
+              :src="require(`../assets/menus/${next.img}`)"
               class="my-3"
               contain
               height="200"

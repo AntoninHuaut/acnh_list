@@ -209,12 +209,13 @@ export default {
   },
   mounted() {
     fetch(
-      `https://raw.githubusercontent.com/Cat333Pokemon/critterpedia/master/db/${this.type}.json`
+      `/static/assets/data/${this.type}.json`
     )
       .then(res => res.json())
       .then(res => {
+        console.log(res);
         this.mainTab.dataList = res.map(item => {
-          item.img = `https://raw.githubusercontent.com/Cat333Pokemon/critterpedia/master/images/${this.type}/${item.name}.png`;
+          item.img = require(`../assets/${this.type}/${item.name}.png`);
           item.price = item.price == -1 ? "N/A" : item.price;
           return item;
         });
