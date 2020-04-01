@@ -5,7 +5,7 @@
       <v-btn text @click="snackbar = false;">Fermer</v-btn>
     </v-snackbar>
 
-    <v-card class="bench elevation-5" :loading="loading">
+    <v-card class="bench elevation-5">
       <v-card-title>
         <h2>Liste des {{ name }}</h2>
         <v-spacer></v-spacer>
@@ -17,6 +17,7 @@
           hide-details
         ></v-text-field>
       </v-card-title>
+
       <v-data-table
         :search="mainTab.search"
         multi-sort
@@ -26,6 +27,29 @@
         :dense="mainTab.dense"
         :loading="loading"
       >
+        <template v-slot:top>
+          <v-row class="pl-5">
+            <v-col cols="6"></v-col>
+            <v-col cols="3">
+              <v-switch
+                v-model="onlyCurrentMonth"
+                @change="updateList"
+                label="Disponible durant ce mois"
+                class="pa-3"
+              ></v-switch>
+            </v-col>
+
+            <v-col cols="3">
+              <v-switch
+                v-model="onlyAvailable"
+                @change="updateList"
+                label="Disponible actuellement"
+                class="pa-3"
+              ></v-switch>
+            </v-col>
+          </v-row>
+        </template>
+
         <template v-slot:item.image="{ item }">
           <div class="p-2">
             <v-img :src="item.img" :alt="item.name" width="92px"></v-img>
@@ -33,7 +57,9 @@
         </template>
 
         <template v-slot:item.hours="{ item }">
-          <v-chip :color="getColorHour(item.hours)">{{getHour(item.hours)}}</v-chip>
+          <v-col class="pb-1 pt-1" v-for="(subFor, index) in getPeriod(item.hours)" :key="index">
+            <v-chip :color="getColorHour(subFor)">{{getHour(subFor)}}</v-chip>
+          </v-col>
         </template>
 
         <template v-slot:item.months="{ item }">
@@ -64,11 +90,11 @@
 </template>
 
 <script>
-function isSelect(items, i) {
-  return i in items;
+function isValueInArray(array, i) {
+  return array.filter(value => value === i).length > 0;
 }
 
-import moment from 'moment';
+import moment from "moment";
 
 export default {
   name: "ListBF",
@@ -77,6 +103,26 @@ export default {
     type: String
   },
   methods: {
+    updateList() {
+      if (this.onlyAvailable && !this.onlyCurrentMonth)
+        setTimeout(() => (this.onlyCurrentMonth = true), 1);
+
+      const currentHour = moment().hours();
+      const currentMonth = moment().month() + 1;
+
+      this.mainTab.dataList = this.mainTab.dataListOrigin.filter(item => {
+        if (item.name == "barreleye") console.log(item);
+
+        if (this.onlyAvailable) {
+          return (
+            isValueInArray(item.hours, currentHour) &&
+            isValueInArray(item.months, currentMonth)
+          );
+        } else if (this.onlyCurrentMonth)
+          return isValueInArray(item.months, currentMonth);
+        else return true;
+      });
+    },
     getColorHour(hours) {
       const currentHour = moment().hours();
       const minHour = Math.min.apply(null, hours);
@@ -87,14 +133,40 @@ export default {
       else return "#A5D6A7";
     },
     getHour(hours) {
+      if (hours.length == 24) return "Toute la journée";
+
+      let msg = "";
+
       let minHour = Math.min.apply(null, hours);
       let maxHour = Math.max.apply(null, hours) + 1;
 
-      if (minHour == 0 && maxHour == 24) return "Toute la journée";
       if (minHour < 10) minHour = "0" + minHour;
       if (maxHour < 10) maxHour = "0" + maxHour;
 
-      return `${minHour}h00 » ${maxHour}h00`;
+      if (msg.length != 0) msg += "\n";
+      msg += `${minHour}h00 » ${maxHour}h00`;
+
+      return msg;
+    },
+    getPeriod(hours) {
+      let periodes = [];
+      let history = [];
+
+      for (let value of hours) {
+        if (history.length > 1) {
+          let oldValue = history[history.length - 1];
+
+          if (oldValue != value - 1) {
+            periodes.push(history.slice());
+            history.splice(0, history.length);
+          }
+        }
+
+        history.push(value);
+      }
+      periodes.push(history);
+
+      return periodes;
     },
     getColorMonth(selected) {
       return selected ? "#A5D6A7" : "#EF9A9A";
@@ -117,7 +189,7 @@ export default {
         const val = res[Math.floor((i - 1) / 4)];
 
         val["month" + letter] = months[line][col];
-        val["selected" + letter] = isSelect(items, i);
+        val["selected" + letter] = isValueInArray(items, i);
       }
 
       return res;
@@ -165,6 +237,8 @@ export default {
       });
 
     return {
+      onlyCurrentMonth: false,
+      onlyAvailable: false,
       loading: true,
       snackbar: false,
       monthTab: {
@@ -218,6 +292,7 @@ export default {
           item.price = item.price == -1 ? "N/A" : item.price;
           return item;
         });
+        this.mainTab.dataListOrigin = this.mainTab.dataList.slice();
 
         this.loading = false;
       })
