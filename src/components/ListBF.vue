@@ -111,8 +111,6 @@ export default {
       const currentMonth = moment().month() + 1;
 
       this.mainTab.dataList = this.mainTab.dataListOrigin.filter(item => {
-        if (item.name == "barreleye") console.log(item);
-
         if (this.onlyAvailable) {
           return (
             isValueInArray(item.hours, currentHour) &&
@@ -125,11 +123,8 @@ export default {
     },
     getColorHour(hours) {
       const currentHour = moment().hours();
-      const minHour = Math.min.apply(null, hours);
-      const maxHour = Math.max.apply(null, hours);
-
-      if (currentHour < minHour || currentHour > maxHour) return "#EF9A9A";
-      else if (currentHour == maxHour) return "#FFCC80";
+      const valueInArray = isValueInArray(hours, currentHour);
+      if (!valueInArray) return "#EF9A9A";
       else return "#A5D6A7";
     },
     getHour(hours) {
@@ -137,11 +132,13 @@ export default {
 
       let msg = "";
 
-      let minHour = Math.min.apply(null, hours);
-      let maxHour = Math.max.apply(null, hours) + 1;
+      let minHour = hours[0];
+      let maxHour = hours[hours.length - 1] + 1;
 
       if (minHour < 10) minHour = "0" + minHour;
       if (maxHour < 10) maxHour = "0" + maxHour;
+
+      if (maxHour === 24) maxHour = "00";
 
       if (msg.length != 0) msg += "\n";
       msg += `${minHour}h00 » ${maxHour}h00`;
@@ -165,6 +162,21 @@ export default {
         history.push(value);
       }
       periodes.push(history);
+
+      if (periodes.length > 1) {
+        let firstPeriod = periodes[0];
+        let lastPeriod = periodes[periodes.length - 1];
+
+        let minHourPrec = firstPeriod[0];
+        let maxHourCurrent = lastPeriod[lastPeriod.length - 1];
+
+        if (maxHourCurrent == 23) maxHourCurrent = 0;
+
+        if (minHourPrec == maxHourCurrent) {
+          firstPeriod.forEach(val => lastPeriod.push(val));
+          periodes.shift();
+        }
+      }
 
       return periodes;
     },
